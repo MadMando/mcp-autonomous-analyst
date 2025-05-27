@@ -19,38 +19,44 @@ Autonomous Analyst is a local, agentic AI pipeline that:
 
 ---
 
-## ⚙️ Features
-| Component                       | Description                                                                                  |
-|--------------------------------|----------------------------------------------------------------------------------------------|
-| `FastAPI` Web UI               | Friendly dashboard for synthetic or uploaded datasets                                        |
-| MCP Tool Orchestration         | Each process step is exposed as a callable MCP tool                                          |
-| Anomaly Detection              | Mahalanobis Distance-based outlier detection                                                 |
-| Visual Output                  | Saved scatter plot of inliers vs. outliers                                                   |
-| Local LLM Summarization       | Insights generated using `llama3.2:1b` via Ollama                                             |
-| Vector Store Logging           | Logs summaries into ChromaDB for memory                                                      |
-| Agentic Flow                   | LLM + memory + tool use + context awareness                                                  |
+### ⚙️ Features
+
+| Component                    | Description                                                                                 |
+|-----------------------------|---------------------------------------------------------------------------------------------|
+| **FastAPI Web UI**          | Friendly dashboard for synthetic or uploaded datasets                                      |
+| **MCP Tool Orchestration**  | Each process step is exposed as a callable MCP tool                                        |
+| **Anomaly Detection**       | Mahalanobis Distance-based outlier detection                                               |
+| **Visual Output**           | Saved scatter plot of inliers vs. outliers                                                 |
+| **Local LLM Summarization** | Insights generated using `llama3.2:1b` via Ollama                                           |
+| **Vector Store Logging**    | Summaries are stored in ChromaDB for persistent memory                                     |
+| **Agentic Planning Tool**   | A dedicated LLM tool (`autonomous_plan`) determines next steps based on dataset context    |
+| **Agentic Flow**            | LLM + memory + tool use + automatic reasoning + context awareness                          |
 
 ---
 
-## 🧪 Tools Defined (via MCP)
-| Tool Name                     | Description                                                                                    | LLM Used |
-|------------------------------|------------------------------------------------------------------------------------------------|----------|
-| `generate_data`              | Create synthetic tabular data (Gaussian + categorical)                                         | ❌        |
-| `analyze_outliers`           | Label rows with Mahalanobis distance scoring                                                  | ❌        |
-| `plot_results`               | Generate scatter plot visualization of anomaly classification                                | ❌        |
-| `summarize_results`          | Use `llama3.2:1b` to interpret and explain the outlier findings                               | ✅        |
-| `summarize_data_stats`       | Use `llama3.2:1b` to describe dataset stats in plain English                                 | ✅        |
-| `log_results_to_vector_store`| Store LLM output summaries into ChromaDB                                                      | ❌        |
-| `search_logs`                | Query past logs for similarity (uses ChromaDB, LLM optional)                                  | ⚠️        |
+### 🧪 Tools Defined (via MCP)
+
+| Tool Name                     | Description                                                                                      | LLM Used |
+|------------------------------|--------------------------------------------------------------------------------------------------|----------|
+| `generate_data`              | Create synthetic tabular data (Gaussian + categorical)                                           | ❌        |
+| `analyze_outliers`           | Label rows using Mahalanobis distance                                                           | ❌        |
+| `plot_results`               | Save a plot visualizing inliers vs outliers                                                     | ❌        |
+| `summarize_results`          | Interpret and explain outlier distribution using `llama3.2:1b`                                  | ✅        |
+| `summarize_data_stats`       | Describe dataset trends using `llama3.2:1b`                                                     | ✅        |
+| `log_results_to_vector_store`| Store summaries to ChromaDB for future reference                                                 | ❌        |
+| `search_logs`                | Retrieve relevant past sessions using vector search (optional LLM use)                         | ⚠️        |
+| `autonomous_plan`            | Run the full pipeline, use LLM to recommend next actions automatically                          | ✅        |
 
 ---
 
-## 🤖 Agentic Capabilities
-- **Autonomy:** Chooses workflow steps from data input to summary
-- **Tool Use:** Tasks executed via standard MCP tool interface
-- **Reasoning:** LLM interprets data conditions and suggests actions
-- **Memory:** Uses ChromaDB for contextual continuity across sessions
-- **LLM:** `llama3.2:1b` via Ollama with temperature=0.1
+### 🤖 Agentic Capabilities
+
+- **Autonomy**: LLM-guided execution path selection with `autonomous_plan`
+- **Tool Use**: Dynamically invokes registered MCP tools via LLM inference
+- **Reasoning**: Generates technical insights from dataset conditions and outlier analysis
+- **Memory**: Persists and recalls knowledge using ChromaDB vector search
+- **LLM**: Powered by Ollama with `llama3.2:1b` (temperature = 0.1, deterministic)
+
 
 ---
 
@@ -60,7 +66,7 @@ Autonomous Analyst is a local, agentic AI pipeline that:
 ```bash
 git clone https://github.com/MadMando/autonomous-analyst.git
 cd autonomous-analyst
-conda create -n mcp-agentic python=3.10 -y
+conda create -n mcp-agentic python=3.11 -y
 conda activate mcp-agentic
 pip install uv
 uv pip install -r requirements.txt
