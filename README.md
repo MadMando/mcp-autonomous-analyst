@@ -3,6 +3,8 @@
   <img src="https://img.shields.io/badge/Langflow-Orchestration-purple" alt="Langflow Badge"/>
   <img src="https://img.shields.io/badge/Ollama-LLM-green" alt="Ollama Badge"/>
   <img src="https://img.shields.io/badge/ChromaDB-VectorDB-orange" alt="ChromaDB Badge"/>
+  <img src="https://img.shields.io/badge/FastAPI-Web_UI-teal" alt="FastAPI Badge"/>
+  <img src="https://img.shields.io/badge/Uvicorn-ASGI_Server-black" alt="Uvicorn Badge"/>
 </p>
 
 # README.md — Autonomous Analyst
