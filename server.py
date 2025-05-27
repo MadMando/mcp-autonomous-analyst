@@ -11,6 +11,7 @@ from tools.plotter import plot_outliers
 from tools.summarizer import summarize_outliers, describe_dataset
 from tools.vector_store import log_to_chromadb, query_recent_sessions
 from tools.planner import plan_and_recommend
+from tools.planner import plan_and_recommend, call_ollama
 
 # Enable logging
 logging.basicConfig(level=logging.INFO)
@@ -69,14 +70,19 @@ def autonomous_plan() -> str:
     df = pd.read_csv("data/generated_data.csv")
     summary1 = summarize_outliers(df)
     summary2 = describe_dataset(df)
-    recommendation = plan_and_recommend(df)
+    recommendation = call_ollama(
+        f"You are an AI analyst. Given the data summaries below, decide on next steps.\n\n"
+        f"--- Outlier Summary ---\n{summary1}\n\n"
+        f"--- Stats Summary ---\n{summary2}\n\n"
+        f"What should be done next?"
+    )
     log_to_chromadb(df)
+
     return (
         f"📊 Outlier Summary:\n{summary1}\n\n"
         f"📈 Dataset Overview:\n{summary2}\n\n"
         f"🤖 Recommendation:\n{recommendation}"
     )
-
 
 @mcp.tool(description="Automatically invoke tools based on LLM reasoning.")
 async def autonomous_pipeline(user_goal: str) -> str:
@@ -94,7 +100,7 @@ async def autonomous_pipeline(user_goal: str) -> str:
     plan = generate_response(prompt).strip().splitlines()
     results = []
 
-    async with streamablehttp_client("http://localhost:8001") as (read, write, _):
+    async with streamablehttp_client("http://localhost:8001/mcp") as (read, write, _):
         async with ClientSession(read, write) as session:
             await session.initialize()
             for tool_name in plan:
