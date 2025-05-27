@@ -129,12 +129,3 @@ data/
 ```
 
 ---
-
-## 📌 Coming Soon
-- 📥 Excel upload support
-- 🧠 RAG-driven drilldown and deeper summaries
-- 💡 Fine-tuned agent control logic
-
----
-
-Built with ❤️ for real-world agentic AI workflows.
