@@ -1,17 +1,11 @@
-# web.py (MCP client with tool descriptions and agentic explanations)
-
 import os
-
 import pandas as pd
-from fastapi import FastAPI, UploadFile, Form
+from fastapi import FastAPI, UploadFile, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
-
-# FastAPI app
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -52,26 +46,30 @@ async def dashboard():
             <div class="section">
                 <h2>⚙️ 2. Toolchain (MCP Tools)</h2>
                 <ul>
-                    <li><strong>generate_data:</strong> Synthesizes realistic datasets using normal and categorical sampling. <em>(No LLM)</em></li>
-                    <li><strong>analyze_outliers:</strong> Applies Mahalanobis distance for anomaly detection. <em>(No LLM)</em></li>
-                    <li><strong>plot_results:</strong> Generates a Matplotlib-based scatter plot of inliers vs. outliers. <em>(No LLM)</em></li>
-                    <li><strong>summarize_results:</strong> Uses <code>llama3.2:1b</code> via Ollama to explain outliers and suggest next steps.</li>
-                    <li><strong>summarize_data_stats:</strong> Uses <code>llama3.2:1b</code> to interpret statistical patterns in natural language.</li>
-                    <li><strong>log_results_to_vector_store:</strong> Persists summaries to ChromaDB for future reference. <em>(No LLM)</em></li>
-                    <li><strong>search_logs:</strong> Retrieves relevant sessions using semantic similarity. <em>(Uses ChromaDB, optional LLM)</em></li>
+                    <li><strong>generate_data:</strong> Synthetic data creation (No LLM)</li>
+                    <li><strong>analyze_outliers:</strong> Mahalanobis anomaly detection (No LLM)</li>
+                    <li><strong>plot_results:</strong> Inlier/outlier visualization (No LLM)</li>
+                    <li><strong>summarize_results:</strong> Outlier analysis via llama3.2:1b</li>
+                    <li><strong>summarize_data_stats:</strong> Stats to natural language via LLM</li>
+                    <li><strong>log_results_to_vector_store:</strong> Archive results (ChromaDB)</li>
+                    <li><strong>search_logs:</strong> Semantic log recall (ChromaDB + optional LLM)</li>
+                    <li><strong>autonomous_plan:</strong> 🔁 Auto-planner that recommends next actions</li>
                 </ul>
+                <form action="/plan" method="get">
+                    <button type="submit">🚀 Run Autonomous Planning</button>
+                </form>
             </div>
 
             <div class="section">
                 <h2>🧠 3. Agentic Behaviors</h2>
                 <ul>
-                    <li><strong>Autonomy:</strong> Chooses workflows based on data source (synthetic or uploaded).</li>
-                    <li><strong>Reasoning:</strong> Summarizes complex insights using LLMs for interpretability.</li>
-                    <li><strong>Memory:</strong> Logs and retrieves analysis sessions using a vector database.</li>
-                    <li><strong>Tool Use:</strong> All processing is driven by callable tools exposed via the MCP protocol.</li>
+                    <li><strong>Autonomy:</strong> Agent determines what to do next based on data</li>
+                    <li><strong>LLM Reasoning:</strong> Uses llama3.2:1b to interpret and decide</li>
+                    <li><strong>Memory:</strong> Saves and retrieves insights via ChromaDB</li>
+                    <li><strong>Tool Use:</strong> Uses MCP to invoke modular tools</li>
                 </ul>
-                <p><strong>LLM Used:</strong> llama3.2:1b via local Ollama instance</p>
-                <p><strong>Inference Mode:</strong> Single-shot, deterministic (temperature = 0.1)</p>
+                <p><strong>LLM:</strong> llama3.2:1b via Ollama</p>
+                <p><strong>Mode:</strong> Single-shot, temperature=0.1</p>
             </div>
         </body>
     </html>
@@ -102,33 +100,36 @@ async def analyze(action: str = Form(...), file: UploadFile = None):
 
             return f"""
             <html>
-                <head>
-                    <title>Autonomous Analyst Results</title>
-                    <style>
-                        body {{ font-family: Arial; margin: 2em; }}
-                        img {{ max-width: 600px; border: 1px solid #ccc; }}
-                        .section {{ margin-bottom: 2em; }}
-                        h2 {{ border-bottom: 2px solid #eee; padding-bottom: 0.2em; }}
-                        pre {{ background: #f9f9f9; padding: 1em; border: 1px solid #ddd; }}
-                    </style>
-                </head>
+                <head><title>Analysis Results</title></head>
                 <body>
                     <h1>🔍 Analysis Results</h1>
-
-                    <div class="section">
-                        <h2>🖼️ Outlier Visualization</h2>
-                        <img src="/static/plot.png" alt="Outlier Plot">
-                    </div>
-
-                    <div class="section">
-                        <h2>📌 Outlier Summary (via llama3.2:1b)</h2>
-                        <pre>{outlier_summary.content[0].text}</pre>
-                    </div>
-
-                    <div class="section">
-                        <h2>📈 Dataset Description (via llama3.2:1b)</h2>
-                        <pre>{stats_summary.content[0].text}</pre>
-                    </div>
+                    <div class="section"><h2>🖼️ Outlier Plot</h2><img src="/static/plot.png"></div>
+                    <div class="section"><h2>📌 Summary (via llama3.2:1b)</h2><pre>{outlier_summary.content[0].text}</pre></div>
+                    <div class="section"><h2>📈 Stats (via llama3.2:1b)</h2><pre>{stats_summary.content[0].text}</pre></div>
                 </body>
             </html>
             """
+
+
+@app.get("/plan", response_class=HTMLResponse)
+async def run_autonomous_plan():
+    try:
+        async with streamablehttp_client("http://localhost:8000/mcp") as (read, write, _):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                result = await session.call_tool("autonomous_plan")
+                message = result.content[0].text if result.content else "No response from LLM."
+    except Exception as e:
+        message = f"Error running autonomous_plan: {str(e)}"
+
+    return f"""
+    <html>
+        <head><title>Autonomous Plan Output</title></head>
+        <body>
+            <h1>🧠 Autonomous Pipeline Execution</h1>
+            <p><strong>LLM Recommendation:</strong></p>
+            <pre>{message}</pre>
+            <p><a href="/">← Back to Dashboard</a></p>
+        </body>
+    </html>
+    """

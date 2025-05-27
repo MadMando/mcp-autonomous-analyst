@@ -1,17 +1,16 @@
-# server.py
-
 import logging
-
 import pandas as pd
 
 from mcp.server.fastmcp import FastMCP
+from mcp import ClientSession
+from mcp.client.streamable_http import streamablehttp_client
+
 from tools.synthetic_data import generate_synthetic_data
 from tools.outlier_detection import detect_outliers
 from tools.plotter import plot_outliers
 from tools.summarizer import summarize_outliers, describe_dataset
 from tools.vector_store import log_to_chromadb, query_recent_sessions
 from tools.planner import plan_and_recommend
-
 
 # Enable logging
 logging.basicConfig(level=logging.INFO)
@@ -71,12 +70,41 @@ def autonomous_plan() -> str:
     summary1 = summarize_outliers(df)
     summary2 = describe_dataset(df)
     recommendation = plan_and_recommend(df)
-    log_to_chromadb(df)  # persist results
+    log_to_chromadb(df)
     return (
         f"📊 Outlier Summary:\n{summary1}\n\n"
         f"📈 Dataset Overview:\n{summary2}\n\n"
         f"🤖 Recommendation:\n{recommendation}"
     )
+
+
+@mcp.tool(description="Automatically invoke tools based on LLM reasoning.")
+async def autonomous_pipeline(user_goal: str) -> str:
+    """
+    Uses LLM to determine a sequence of tool invocations to meet a goal.
+    """
+    available_tools = [tool.name for tool in mcp.get_tools()]
+    prompt = (
+        f"You are an autonomous analyst. Your available tools are:\n"
+        f"{', '.join(available_tools)}\n\n"
+        f"The user goal is: \"{user_goal}\"\n"
+        f"List the tools you would use to complete this goal, one per line, in order."
+    )
+
+    plan = generate_response(prompt).strip().splitlines()
+    results = []
+
+    async with streamablehttp_client("http://localhost:8001") as (read, write, _):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            for tool_name in plan:
+                try:
+                    response = await session.call_tool(tool_name.strip(), arguments={})
+                    results.append(f"✅ {tool_name} → {response.content[0].text}")
+                except Exception as e:
+                    results.append(f"❌ Failed to call '{tool_name}': {e}")
+
+    return "\n".join(results)
 
 
 if __name__ == "__main__":
