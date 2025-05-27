@@ -79,7 +79,7 @@ mcp run server.py --transport streamable-http
 
 ### 3. Start the Web Dashboard
 ```bash
-uvicorn web:app --reload
+uvicorn web:app --reload --port 8001
 ```
 Then visit: [http://localhost:8000](http://localhost:8000)
 
