@@ -136,7 +136,7 @@ data/
 
 ---
 
-## 🙌 Contributions & Acknowledgements
+## 🙌 Acknowledgements
 
 This project wouldn't be possible without the incredible work of the open-source community. Special thanks to:
 
@@ -147,9 +147,7 @@ This project wouldn't be possible without the incredible work of the open-source
 | 🔍 **ChromaDB**            | Vector database for logging and retrieval      | [chroma-core/chroma](https://github.com/chroma-core/chroma) |
 | 🌐 **FastAPI**             | Interactive, fast web interface                | [tiangolo/fastapi](https://github.com/tiangolo/fastapi) |
 | ⚡ **Uvicorn**             | ASGI server powering the FastAPI backend       | [encode/uvicorn](https://github.com/encode/uvicorn) |
-| 📊 **pandas**              | Data manipulation and preprocessing            | [pandas-dev/pandas](https://github.com/pandas-dev/pandas) |
-| 📈 **matplotlib**          | Data visualization (outlier plots)             | [matplotlib/matplotlib](https://github.com/matplotlib/matplotlib) |
-| 🤖 **scikit-learn**        | Outlier detection and machine learning         | [scikit-learn/scikit-learn](https://github.com/scikit-learn/scikit-learn) |
+
 
 > 💡 If you use this project, please consider starring or contributing to the upstream tools that make it possible.
 
