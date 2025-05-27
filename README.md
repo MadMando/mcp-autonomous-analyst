@@ -65,7 +65,7 @@ Autonomous Analyst is a local, agentic AI pipeline that:
 ### 1. Clone and Set Up
 ```bash
 git clone https://github.com/MadMando/mcp-autonomous-analyst.git
-cd autonomous-analyst
+cd mcp-autonomous-analyst
 conda create -n mcp-agentic python=3.11 -y
 conda activate mcp-agentic
 pip install uv
