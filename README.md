@@ -146,3 +146,5 @@ This project wouldn't be possible without the incredible work of the open-source
 | 🤖 **scikit-learn**        | Outlier detection and machine learning         | [scikit-learn/scikit-learn](https://github.com/scikit-learn/scikit-learn) |
 
 > 💡 If you use this project, please consider starring or contributing to the upstream tools that make it possible.
+
+This repo was created with the assistance of a local rag-llm using llama3.2:1b
