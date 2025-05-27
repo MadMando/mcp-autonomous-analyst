@@ -129,3 +129,18 @@ data/
 ```
 
 ---
+
+🙌 Contributions & Acknowledgements
+This project wouldn't be possible without the incredible work of the open-source community. Special thanks to:
+
+Tool / Library	Purpose	Repository
+🧠 Model Context Protocol (MCP)	Agentic tool orchestration & execution	modelcontextprotocol/python-sdk
+💬 Ollama	Local LLM inference engine (llama3.2:1b)	ollama/ollama
+🔍 ChromaDB	Vector database for logging and retrieval	chroma-core/chroma
+🌐 FastAPI	Interactive, fast web interface	tiangolo/fastapi
+⚡ Uvicorn	ASGI server powering the FastAPI backend	encode/uvicorn
+📊 pandas	Data manipulation and preprocessing	pandas-dev/pandas
+📈 matplotlib	Data visualization (outlier plots)	matplotlib/matplotlib
+🤖 scikit-learn	Outlier detection and machine learning	scikit-learn/scikit-learn
+
+If you use this project, please consider starring or contributing to the upstream tools that make it possible 💫
