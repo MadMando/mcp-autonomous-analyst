@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python" alt="Python Badge"/>
-  <img src="https://img.shields.io/badge/Langflow-Orchestration-purple" alt="Langflow Badge"/>
+  <img src="https://img.shields.io/badge/MCP-Model_Context_Protocol-purple" alt="MCP Badge"/>
   <img src="https://img.shields.io/badge/Ollama-LLM-green" alt="Ollama Badge"/>
   <img src="https://img.shields.io/badge/ChromaDB-VectorDB-orange" alt="ChromaDB Badge"/>
   <img src="https://img.shields.io/badge/FastAPI-Web_UI-teal" alt="FastAPI Badge"/>
