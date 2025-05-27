@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Uvicorn-ASGI_Server-black" alt="Uvicorn Badge"/>
 </p>
 
-# README.md — Autonomous Analyst
+# Autonomous Analyst
 
 ## 🧠 Overview
 Autonomous Analyst is a local, agentic AI pipeline that:
